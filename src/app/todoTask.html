@@ -1,0 +1,62 @@
+<div *ngIf="loading" class="loading-overlay">
+    <p-progressSpinner></p-progressSpinner>
+</div>
+<div class="card">
+    <p-toast></p-toast>
+    <div class="card">
+        <h1 class="todo-header">Bhuna ToDoApp</h1>
+        <button pButton pRipple type="button" icon="pi pi-plus" (click)="onRowCreate()">Create Task</button>
+    </div>
+    <p-table [value]="apiData" dataKey="id" editMode="row" [tableStyle]="{'min-width': '50rem'}"
+             paginator="true" rows="5" [rowsPerPageOptions]="[5, 10, 20, 50, 100]">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Task Name</th>
+                <th>Task Description</th>
+                <th>Created On</th>
+                <th>Completed</th>
+                <th>Action</th>
+                <th>Author</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-task let-editing="editing">
+            <tr>
+                <td>{{ task.taskName }}</td>
+                <td>{{ task.taskDescription }}</td>
+                <td>{{ task.createdOn | date }}</td>
+                <td>
+                    <i *ngIf="task.isCompleted" class="pi pi-check" style="color: slateblue;"></i>
+                    <i *ngIf="!task.isCompleted" class="pi pi-times" style="color: red;"></i>
+                </td>
+                <td>
+                    <div class="flex align-items-center gap-2">
+                        <button pButton pRipple type="button" icon="pi pi-pencil" (click)="showDialog(task)" class="p-button-rounded p-button-success p-button-text"></button>
+                        <button pButton pRipple type="button" icon="pi pi-trash" (click)="onRowDelete(task)" class="p-button-rounded p-button-danger p-button-text" [disabled]="disableButton"></button>
+                    </div>
+                </td>
+                <td>Bhuv</td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+    <p-dialog header="Task Details" [(visible)]="visible" [modal]="true" [style]="{ width: '35rem' }">
+        <form #taskForm="ngForm" (ngSubmit)="onSave(taskForm)" novalidate>
+            <div class="field-container">
+                <label for="taskName" class="field-label">Task Name</label>
+                <input pInputText id="taskName" [(ngModel)]="rowData.taskName" name="taskName" class="field-input" required="true" #taskName="ngModel"/>
+            </div>        
+            <div class="field-container">
+                <label for="taskDescription" class="field-label">Task Description</label>
+                <input pInputText id="taskDescription" class="field-input" [(ngModel)]="rowData.taskDescription" name="taskDescription" required="true" #taskDescription="ngModel"/>
+            </div>
+            <div class="field-container">
+                <label for="isCompleted" class="field-label">Completed</label>
+                <p-checkbox id="isCompleted" [(ngModel)]="rowData.isCompleted" name="isCompleted" binary="true"></p-checkbox>
+            </div>
+            <div class="flex justify-content-end gap-2 mt-3">
+                <button pButton label="Cancel" class="p-button-secondary" [disabled]="disableButton" (click)="visible = false"></button>
+                <button pButton label="Save" type="submit" [disabled]="taskForm.invalid || disableButton"></button>
+            </div>
+        </form>
+    </p-dialog>    
+</div>
